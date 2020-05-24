@@ -83,8 +83,7 @@ class _appState extends State<app> {
   _getUsers() {
     API().getUsers().then((response) {
       var o = response;
-      //print(o.body.toString().substring(3));
-      o = o.body.toString().substring(3);
+      o = o.body.toString();
       setState(() {
         Iterable list = json.decode(o);
         users = list.map((model) => User.fromJson(model)).toList();
@@ -125,6 +124,13 @@ class _appState extends State<app> {
                     labelText: 'Search Movie',
                   ),
                 ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Text('hi');
+                  },
+                  itemCount: 10,
+                )
               ],
             ),
           ),

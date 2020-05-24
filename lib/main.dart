@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() => {
       runApp(
@@ -122,6 +123,7 @@ class _appState extends State<app> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -199,15 +201,33 @@ class _appState extends State<app> {
                                         SizedBox(
                                           width: 150,
                                         ),
-                                        Flexible(
-                                          child: Text(
-                                            list["results"][index]["title"]
-                                                .toString(),
-                                            style: TextStyle(
-                                                fontSize:
-                                                    ScreenUtil().setSp(20)),
-                                          ),
-                                        )
+                                        Column(
+                                          children: [
+                                            Flexible(
+                                              child: Text(
+                                                list["results"][index]["title"]
+                                                    .toString(),
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      ScreenUtil().setSp(35),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                await http
+                                                    .get(
+                                                      "https://imdb-api.com/en/API/Ratings/k_g3MCq1Ep/" +
+                                                          list["results"][index]
+                                                                  ["id"]
+                                                              .toString(),
+                                                    )
+                                                    .toString(),
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),

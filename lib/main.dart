@@ -19,7 +19,7 @@ class API {
   }
   Future getUsers(a) {
     var url =
-        "https://imdb-api.com/en/API/SearchMovie/k_I10bb66S/" + a.toString();
+        "https://imdb-api.com/en/API/SearchMovie/k_g3MCq1Ep/" + a.toString();
     return http.get(url);
   }
 }
@@ -92,28 +92,32 @@ class app extends StatefulWidget {
 class _appState extends State<app> {
   TextEditingController name = new TextEditingController();
   List<dynamic> data;
+
+  Map<String, dynamic> list;
   var users = new List<Movie>();
-  _getUsers(var a) {
-    API().getUsers(a).then((response) {
+  _getUsers(var a) async {
+    API().getUsers(a).then((response) async {
       var o = response;
       o = o.body;
-      Map<String, dynamic> list = json.decode(o);
+      list = await json.decode(o);
       List<dynamic> data = list["results"];
-      for (var i = 0; i < 6; i++) {
+      /* for (var i = 0; i < data.length; i++) {
         print(data[i]["title"]);
-      }
+      } */
       setState(() {
         list = json.decode(o);
         data = list["results"];
-        print(data.length);
+        // print(data.length);
         // users = list.map((model) => Movie.fromJson(model)).toList();
       });
     });
-    print(data.length);
+    //print(data.length);
+    // print(list['results'][3]['title']);
   }
 
   initState() {
     super.initState();
+    _getUsers("resident evil");
   }
 
   @override
@@ -127,37 +131,142 @@ class _appState extends State<app> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                TextFormField(
-                  controller: name,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.panorama_vertical),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        Icons.search,
+                Form(
+                  onChanged: () => {
+                    (name.text.toString() == "")
+                        ? print("nothing")
+                        : _getUsers(name.text),
+                  },
+                  child: TextFormField(
+                    onFieldSubmitted: (value) => {
+                      (value.isEmpty)
+                          ? print(
+                              "Empty***************************************")
+                          : _getUsers(name.text),
+                      //print("Something")
+                    },
+                    textInputAction: TextInputAction.go,
+                    controller: name,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.panorama_vertical),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Icons.search,
+                        ),
+                        onPressed: () {
+                          _getUsers(name.text);
+                        },
                       ),
-                      onPressed: () {
-                        _getUsers(name.text);
-                      },
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'Search Movie',
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    labelText: 'Search Movie',
                   ),
                 ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Text(data[index]["title"]);
-                  },
-                  itemCount: data.length,
+                Expanded(
+                  child: ListView.builder(
+                    //shrinkWrap: true,
+                    itemCount: list["results"].length,
+                    itemBuilder: (context, index) {
+                      return (list.isEmpty)
+                          ? CupertinoActivityIndicator()
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  Container(
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: Colors.grey.withOpacity(.1),
+                                            offset: Offset(0, 0),
+                                            blurRadius: 10,
+                                            spreadRadius: 3)
+                                      ],
+                                    ),
+                                    child:
+                                        /* Text(
+                                      list["results"][index]["title"].toString(),
+                                    ), */
+                                        Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 150,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            list["results"][index]["title"]
+                                                .toString(),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        children: [
+                                          image(index),
+                                          SizedBox(
+                                            height: 10,
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            );
+                    },
+                  ),
                 )
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  image(index) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Center(
+          child: CupertinoActivityIndicator(),
+        ),
+        Container(
+          height: 150,
+          width: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            // color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  offset: Offset(0, 0),
+                  blurRadius: 10,
+                  spreadRadius: 3)
+            ],
+          ),
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Image.network(
+            list["results"][index]["image"].toString(),
+            height: 150,
+          ),
+        ),
+      ],
     );
   }
 }

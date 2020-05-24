@@ -203,6 +203,9 @@ class _appState extends State<app> {
                                           child: Text(
                                             list["results"][index]["title"]
                                                 .toString(),
+                                            style: TextStyle(
+                                                fontSize:
+                                                    ScreenUtil().setSp(20)),
                                           ),
                                         )
                                       ],
@@ -252,7 +255,7 @@ class _appState extends State<app> {
             // color: Colors.white,
             boxShadow: [
               BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
+                  color: Colors.grey.withOpacity(0.5),
                   offset: Offset(0, 0),
                   blurRadius: 10,
                   spreadRadius: 3)

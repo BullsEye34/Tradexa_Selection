@@ -106,16 +106,26 @@ class _appState extends State<app> {
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              controller: name,
-              textCapitalization: TextCapitalization.characters,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.panorama_vertical),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: name,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.panorama_vertical),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        Icons.search,
+                      ),
+                      onPressed: () {},
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    labelText: 'Search Movie',
+                  ),
                 ),
-                labelText: 'Search Movie',
-              ),
+              ],
             ),
           ),
         ),

@@ -17,58 +17,70 @@ class API {
   API({var a}) {
     this.a = a;
   }
-  Future getUsers() {
+  Future getUsers(a) {
     var url =
         "https://imdb-api.com/en/API/SearchMovie/k_I10bb66S/" + a.toString();
-    print(http.get(url));
     return http.get(url);
   }
 }
 
-class User {
-  String id;
-  String name;
-  String email;
-  var college;
-  var event;
-  var g;
-  var phone;
+class Movie {
+  String searchType;
+  String expression;
+  List<Results> results;
+  String errorMessage;
 
-  var price;
+  Movie({this.searchType, this.expression, this.results, this.errorMessage});
 
-  User(String id, String name, String email, var college, var event, var g,
-      var price, var phone) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-    this.college = college;
-    this.event = event;
-    this.g = g;
-    this.price = price;
-    this.phone = phone;
+  Movie.fromJson(Map<String, dynamic> json) {
+    searchType = json['searchType'];
+    expression = json['expression'];
+    if (json['results'] != null) {
+      results = new List<Results>();
+      json['results'].forEach((v) {
+        results.add(new Results.fromJson(v));
+      });
+    }
+    errorMessage = json['errorMessage'];
   }
 
-  User.fromJson(Map json)
-      : id = json['TCFRegistrationId'],
-        name = json['Name'],
-        email = json['Email'],
-        college = json['College'],
-        event = json['Ticket name'],
-        g = json['Gender'],
-        price = json['TicketPrice'],
-        phone = json['ContactNo'];
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['searchType'] = this.searchType;
+    data['expression'] = this.expression;
+    if (this.results != null) {
+      data['results'] = this.results.map((v) => v.toJson()).toList();
+    }
+    data['errorMessage'] = this.errorMessage;
+    return data;
+  }
+}
 
-  Map toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'college': college,
-      'event': event,
-      'g': g,
-      'price': price,
-      'phone': phone
-    };
+class Results {
+  String id;
+  String resultType;
+  String image;
+  String title;
+  String description;
+
+  Results({this.id, this.resultType, this.image, this.title, this.description});
+
+  Results.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    resultType = json['resultType'];
+    image = json['image'];
+    title = json['title'];
+    description = json['description'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['resultType'] = this.resultType;
+    data['image'] = this.image;
+    data['title'] = this.title;
+    data['description'] = this.description;
+    return data;
   }
 }
 
@@ -79,21 +91,29 @@ class app extends StatefulWidget {
 
 class _appState extends State<app> {
   TextEditingController name = new TextEditingController();
-  var users = new List<User>();
-  _getUsers() {
-    API().getUsers().then((response) {
+  List<dynamic> data;
+  var users = new List<Movie>();
+  _getUsers(var a) {
+    API().getUsers(a).then((response) {
       var o = response;
-      o = o.body.toString();
+      o = o.body;
+      Map<String, dynamic> list = json.decode(o);
+      List<dynamic> data = list["results"];
+      for (var i = 0; i < 6; i++) {
+        print(data[i]["title"]);
+      }
       setState(() {
-        Iterable list = json.decode(o);
-        users = list.map((model) => User.fromJson(model)).toList();
+        list = json.decode(o);
+        data = list["results"];
+        print(data.length);
+        // users = list.map((model) => Movie.fromJson(model)).toList();
       });
     });
+    print(data.length);
   }
 
   initState() {
     super.initState();
-    _getUsers();
   }
 
   @override
@@ -116,7 +136,9 @@ class _appState extends State<app> {
                       icon: Icon(
                         Icons.search,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        _getUsers(name.text);
+                      },
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -127,9 +149,9 @@ class _appState extends State<app> {
                 ListView.builder(
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    return Text('hi');
+                    return Text(data[index]["title"]);
                   },
-                  itemCount: 10,
+                  itemCount: data.length,
                 )
               ],
             ),

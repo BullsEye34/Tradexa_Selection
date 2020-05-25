@@ -21,7 +21,7 @@ class API {
   }
   Future getUsers(a) {
     var url =
-        "https://imdb-api.com/en/API/SearchMovie/k_Pz73mq9k/" + a.toString();
+        "https://imdb-api.com/en/API/SearchMovie/k_8m5p4Jya/" + a.toString();
     return http.get(url);
   }
 }
@@ -117,7 +117,7 @@ class _appState extends State<app> {
       var o = response;
       o = o.body;
       list = await json.decode(o);
-      List<dynamic> data = list["results"];
+      //  List<dynamic> data = list["results"];
       /* for (var i = 0; i < data.length; i++) {
         print(data[i]["title"]);
       } */
@@ -127,7 +127,7 @@ class _appState extends State<app> {
         // print(data.length);
         // users = list.map((model) => Movie.fromJson(model)).toList();
       });
-    });
+    }).catchError((onError) => {});
     //print(data.length);
     // print(list['results'][3]['title']);
   }
@@ -139,6 +139,7 @@ class _appState extends State<app> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(seconds: 3));
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarBrightness: Brightness.dark,
@@ -149,6 +150,7 @@ class _appState extends State<app> {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     ScreenUtil.init(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -199,7 +201,9 @@ class _appState extends State<app> {
                 Expanded(
                   child: ListView.builder(
                     //shrinkWrap: true,
-                    itemCount: list["results"].length,
+                    itemCount: (list["results"].length == "null")
+                        ? 0
+                        : list["results"].length,
                     itemBuilder: (context, index) {
                       var rating;
                       () {};

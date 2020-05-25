@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +21,7 @@ class API {
   }
   Future getUsers(a) {
     var url =
-        "https://imdb-api.com/en/API/SearchMovie/k_g3MCq1Ep/" + a.toString();
+        "https://imdb-api.com/en/API/SearchMovie/k_Pz73mq9k/" + a.toString();
     return http.get(url);
   }
 }
@@ -90,6 +91,21 @@ class app extends StatefulWidget {
   _appState createState() => _appState();
 }
 
+class Person {
+  String imDb;
+  Person(this.imDb);
+
+  // named constructor
+  Person.fromJson(Map<String, dynamic> json) : imDb = json['imDb'];
+
+  // method
+  Map<String, dynamic> toJson() {
+    return {
+      'imDb': imDb,
+    };
+  }
+}
+
 class _appState extends State<app> {
   TextEditingController name = new TextEditingController();
   List<dynamic> data;
@@ -123,6 +139,15 @@ class _appState extends State<app> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.white,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarDividerColor: Colors.black,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
     ScreenUtil.init(context);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -167,11 +192,19 @@ class _appState extends State<app> {
                     ),
                   ),
                 ),
+                Divider(
+                  thickness: 0,
+                  color: Colors.white,
+                ),
                 Expanded(
                   child: ListView.builder(
                     //shrinkWrap: true,
                     itemCount: list["results"].length,
                     itemBuilder: (context, index) {
+                      var rating;
+                      () {};
+                      // print(jsonData["imDb"]);
+
                       return (list.isEmpty)
                           ? CupertinoActivityIndicator()
                           : Padding(
@@ -203,28 +236,23 @@ class _appState extends State<app> {
                                         ),
                                         Column(
                                           children: [
+                                            SizedBox(
+                                              height: 20,
+                                            ),
                                             Flexible(
                                               child: Text(
                                                 list["results"][index]["title"]
                                                     .toString(),
                                                 style: TextStyle(
                                                   fontSize:
-                                                      ScreenUtil().setSp(35),
+                                                      ScreenUtil().setSp(40),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
+                                            Divider(),
                                             Flexible(
-                                              child: Text(
-                                                await http
-                                                    .get(
-                                                      "https://imdb-api.com/en/API/Ratings/k_g3MCq1Ep/" +
-                                                          list["results"][index]
-                                                                  ["id"]
-                                                              .toString(),
-                                                    )
-                                                    .toString(),
-                                              ),
+                                              child: Text('rating'),
                                             )
                                           ],
                                         ),

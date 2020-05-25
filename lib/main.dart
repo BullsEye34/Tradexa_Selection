@@ -230,15 +230,16 @@ class _appState extends State<app> {
                                       list["results"][index]["title"].toString(),
                                     ), */
                                         Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         SizedBox(
-                                          width: 150,
+                                          width: 120,
                                         ),
                                         Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            SizedBox(
-                                              height: 20,
-                                            ),
                                             Flexible(
                                               child: Text(
                                                 list["results"][index]["title"]
@@ -252,7 +253,24 @@ class _appState extends State<app> {
                                             ),
                                             Divider(),
                                             Flexible(
-                                              child: Text('rating'),
+                                              child: Text(
+                                                "Year: " +
+                                                    list["results"][index]
+                                                            ["description"]
+                                                        .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.grey),
+                                              ),
+                                            ),
+                                            Divider(),
+                                            Flexible(
+                                              child: Text(
+                                                "Rating to Come Here",
+                                                style: TextStyle(
+                                                    color: Colors.blue,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
                                             )
                                           ],
                                         ),
@@ -314,6 +332,7 @@ class _appState extends State<app> {
           borderRadius: BorderRadius.circular(10),
           child: Image.network(
             list["results"][index]["image"].toString(),
+            width: 100,
             height: 150,
           ),
         ),
